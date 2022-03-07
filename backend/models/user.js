@@ -4,7 +4,7 @@ const userSchema = mongoose.Schema({
   username: String,
   name: String,
   passwordHash: String,
-  notes: [
+  blogs: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Note'

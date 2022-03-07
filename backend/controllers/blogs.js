@@ -1,7 +1,7 @@
-const notesRouter = require('express').Router()
+const blogsRouter = require('express').Router()
 const jwt = require('jsonwebtoken')
 
-const Note = require('../models/note')
+const Blog = require('../models/blog')
 const User = require('../models/user')
 
 const getTokenFrom = request => {
@@ -12,16 +12,16 @@ const getTokenFrom = request => {
   return null
 }
 
-notesRouter.get('/', async (request, response) => {
-  const notes = await Note
+blogsRouter.get('/', async (request, response) => {
+  const notes = await Blog
     .find({})
     .populate('user', { username: 1, name: 1 })
 
   response.json(notes)
 })
 
-notesRouter.get('/:id', async (request, response) => {
-  const note = await Note.findById(request.params.id)
+blogsRouter.get('/:id', async (request, response) => {
+  const note = await Blog.findById(request.params.id)
 
   if (note) {
     response.json(note.toJSON())
@@ -30,7 +30,7 @@ notesRouter.get('/:id', async (request, response) => {
   }
 })
 
-notesRouter.post('/', async (request, response) => {
+blogsRouter.post('/', async (request, response) => {
   const { content, important } = request.body
 
   const token = getTokenFrom(request)
@@ -40,7 +40,7 @@ notesRouter.post('/', async (request, response) => {
   }
   const user = await User.findById(decodedToken.id)
 
-  const note = new Note({
+  const note = new Blog({
     content,
     important,
     date: new Date(),
@@ -54,12 +54,12 @@ notesRouter.post('/', async (request, response) => {
   response.status(201).json(savedNote)
 })
 
-notesRouter.delete('/:id', async (request, response) => {
-  await Note.findByIdAndRemove(request.params.id)
+blogsRouter.delete('/:id', async (request, response) => {
+  await Blog.findByIdAndRemove(request.params.id)
   response.status(204).end()
 })
 
-notesRouter.put('/:id', (request, response, next) => {
+blogsRouter.put('/:id', (request, response, next) => {
   const body = request.body
 
   const note = {
@@ -67,11 +67,11 @@ notesRouter.put('/:id', (request, response, next) => {
     important: body.important,
   }
 
-  Note.findByIdAndUpdate(request.params.id, note, { new: true })
+  Blog.findByIdAndUpdate(request.params.id, note, { new: true })
     .then(updatedNote => {
       response.json(updatedNote)
     })
     .catch(error => next(error))
 })
 
-module.exports = notesRouter
+module.exports = blogsRouter
