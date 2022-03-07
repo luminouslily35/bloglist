@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1yYnVuYnVuIiwiaWQiOiI2MjI1NTQ3MzA2MGY0NzJjZTYxODMwMGYiLCJpYXQiOjE2NDY2MjIyMDF9.ra6Y2TEwhWb3kIGKcD5QKQ4ZWsiCUV3KwmdP-_UI82A
+
+{
+  "author": "baw",
+  "likes": 3,
+  "title": "baw",
+  "url": "http://babybunbun.ca"
+}
