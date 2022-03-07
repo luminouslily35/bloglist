@@ -40,12 +40,12 @@ blogsRouter.post('/', async (request, response) => {
   }
   const user = await User.findById(decodedToken.id)
 
-  const note = new Blog({
+  const blog = new Blog({
     title, author, url,
     likes: 0
   })
 
-  const savedBlog = await note.save()
+  const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
