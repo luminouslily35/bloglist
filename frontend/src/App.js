@@ -17,12 +17,11 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  useEffect(() => {
-    blogService
-      .getAll()
-      .then(initialNotes => {
-        setBlogs(initialNotes)
-      })
+  useEffect(async () => {
+    const initialBlogs = await blogService.getAll()
+    const sortedBlogs = [...initialBlogs]
+    sortedBlogs.sort((a, b) => (b.likes - a.likes))
+    setBlogs(sortedBlogs)
   }, [])
 
   useEffect(() => {
@@ -61,22 +60,17 @@ const App = () => {
     setUser(null)
   }
 
-  const createBlog = (blogObject) => {
+  const createBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-      })
+    const newBlog = await blogService.create(blogObject)
+    setBlogs(blogs.concat(newBlog))
   }
 
-  const likeBlog = (blogObject) => {
+  const likeBlog = async (blogObject) => {
     const id = blogObject.id
-    blogService
-      .update(id, blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
-      })
+    const returnedBlog = await blogService.update(id, blogObject)
+    setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+
   }
 
   const blogFormRef = useRef()
