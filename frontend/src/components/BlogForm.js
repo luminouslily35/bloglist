@@ -23,7 +23,6 @@ const NoteForm = ({ createBlog }) => {
   return (
     <div>
       <h2>Create a new blog</h2>
-
       <form onSubmit={handleSubmit}>
         <label>author:
           <input
@@ -38,7 +37,6 @@ const NoteForm = ({ createBlog }) => {
             onChange={({ target }) => setTitle(target.value)}
           />
         </label>
-
         <br />
         <label>url:
           <input
@@ -46,7 +44,6 @@ const NoteForm = ({ createBlog }) => {
             onChange={({ target }) => setUrl(target.value)}
           />
         </label>
-
         <br />
         <button type="submit">save</button>
       </form>

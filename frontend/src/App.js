@@ -61,32 +61,21 @@ const App = () => {
     setUser(null)
   }
 
-  // const toggleImportanceOf = id => {
-  //   const note = blogs.find(n => n.id === id)
-  //   const changedNote = { ...note, important: !note.important }
-
-  //   blogService
-  //     .update(id, changedNote)
-  //     .then(returnedNote => {
-  //       setBlogs(blogs.map(note => note.id !== id ? note : returnedNote))
-  //     })
-  //     .catch(error => {
-  //       setErrorMessage(
-  //         `Note '${note.content}' was already removed from server`
-  //       )
-  //       setTimeout(() => {
-  //         setErrorMessage(null)
-  //       }, 5000)
-  //       setBlogs(blogs.filter(n => n.id !== id))
-  //     })
-  // }
-
   const createBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
+      })
+  }
+
+  const likeBlog = (blogObject) => {
+    const id = blogObject.id
+    blogService
+      .update(id, blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
       })
   }
 
@@ -118,14 +107,15 @@ const App = () => {
       <div>
 
       </div>
-      <ul>
+      <div>
         {blogs.map(blog =>
           <Blog
             key={blog.id}
             blog={blog}
+            likeBlog={likeBlog}
           />
         )}
-      </ul>
+      </div>
 
     </div>
   )
