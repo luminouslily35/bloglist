@@ -1,5 +1,5 @@
 import { useState } from 'react'
-const Blog = ({ blog, likeBlog, deleteBlog }) => {
+const Blog = ({ blog, likeBlog, deleteBlog, currentUser }) => {
   const [showAll, setShowAll] = useState(false)
   const blogStyle = {
     paddingTop: 10,
@@ -17,9 +17,17 @@ const Blog = ({ blog, likeBlog, deleteBlog }) => {
 
   const handleRemove = (event) => {
     event.preventDefault()
-    console.log(blog)
     deleteBlog({ ...blog })
   }
+
+  const renderDeleteButton = () => {
+    if (currentUser.username === blog.user.username) {
+      return <button onClick={handleRemove}>delete</button>
+    } else {
+      return <></>
+    }
+  }
+
   return (
     <div style={blogStyle}>
       {showAll ?
@@ -28,7 +36,9 @@ const Blog = ({ blog, likeBlog, deleteBlog }) => {
           <p>author: {blog.author} </p>
           <p>url: {blog.url} </p>
           <p>likes: {blog.likes} <button onClick={handleClick}>like</button></p>
-          <button onClick={handleRemove}>remove</button>
+          <p>created by {blog.user.username}
+            {currentUser !== null && renderDeleteButton()}
+          </p>
         </div>
         :
         <div>
