@@ -1,5 +1,5 @@
 import { useState } from 'react'
-const Blog = ({ blog, likeBlog }) => {
+const Blog = ({ blog, likeBlog, deleteBlog }) => {
   const [showAll, setShowAll] = useState(false)
   const blogStyle = {
     paddingTop: 10,
@@ -14,6 +14,12 @@ const Blog = ({ blog, likeBlog }) => {
     const updatedBlog = { ...blog, likes: blog.likes + 1 }
     likeBlog(updatedBlog)
   }
+
+  const handleRemove = (event) => {
+    event.preventDefault()
+    console.log(blog)
+    deleteBlog({ ...blog })
+  }
   return (
     <div style={blogStyle}>
       {showAll ?
@@ -22,6 +28,7 @@ const Blog = ({ blog, likeBlog }) => {
           <p>author: {blog.author} </p>
           <p>url: {blog.url} </p>
           <p>likes: {blog.likes} <button onClick={handleClick}>like</button></p>
+          <button onClick={handleRemove}>remove</button>
         </div>
         :
         <div>

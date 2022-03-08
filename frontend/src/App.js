@@ -11,7 +11,6 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -70,7 +69,14 @@ const App = () => {
     const id = blogObject.id
     const returnedBlog = await blogService.update(id, blogObject)
     setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+  }
 
+  const deleteBlog = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title}, by ${blog.author}`)) {
+      const id = blog.id
+      await blogService.deleteRequest(id)
+      setBlogs(blogs.filter(blog => blog.id !== id))
+    }
   }
 
   const blogFormRef = useRef()
@@ -107,6 +113,7 @@ const App = () => {
             key={blog.id}
             blog={blog}
             likeBlog={likeBlog}
+            deleteBlog={deleteBlog}
           />
         )}
       </div>
