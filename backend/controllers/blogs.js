@@ -40,13 +40,14 @@ blogsRouter.post('/', async (request, response) => {
   }
   const user = await User.findById(decodedToken.id)
 
-  const blog = new Blog({
+  const blog = await new Blog({
     title, author, url,
     likes: 0,
     user: user._id
   })
 
-  const savedBlog = await blog.save()
+  let savedBlog = await blog.save()
+  savedBlog = await savedBlog.populate('user', { username: 1, name: 1 })
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
@@ -74,7 +75,8 @@ blogsRouter.delete('/:id', async (request, response) => {
 
 blogsRouter.put('/:id', async (request, response) => {
   const { likes } = request.body
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, { likes }, { new: true })
+  let updatedBlog = await Blog.findByIdAndUpdate(request.params.id, { likes }, { new: true })
+  updatedBlog = await updatedBlog.populate('user', { username: 1, name: 1 })
   response.json(updatedBlog)
 })
 

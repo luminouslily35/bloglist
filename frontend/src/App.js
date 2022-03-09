@@ -60,9 +60,18 @@ const App = () => {
   }
 
   const createBlog = async (blogObject) => {
-    blogFormRef.current.toggleVisibility()
-    const newBlog = await blogService.create(blogObject)
-    setBlogs(blogs.concat(newBlog))
+    try {
+      const newBlog = await blogService.create(blogObject)
+      blogFormRef.current.toggleVisibility()
+      setBlogs(blogs.concat(newBlog))
+    }
+    catch (error) {
+      setErrorMessage(error.response.data.error)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+
   }
 
   const likeBlog = async (blogObject) => {
