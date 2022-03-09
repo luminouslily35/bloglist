@@ -30,81 +30,85 @@ describe('Note app', function () {
       .should('contain', 'wrong credentials')
       .and('have.css', 'color', 'rgb(255, 0, 0)')
   })
+
+  describe('log in via api', function () {
+    beforeEach(function () {
+      cy.request({
+        method: 'POST',
+        url: 'http://localhost:3003/api/login',
+        body: {
+          username: 'bunny',
+          password: 'bunbun'
+        }
+      })
+        .then(response => {
+          Cypress.env('token', response.body.token)
+          window.localStorage.setItem(
+            'loggedNoteappUser', JSON.stringify(response.body)
+          )
+        })
+      cy.visit('http://localhost:3000')
+    })
+
+
+    it('can make a blog', function () {
+      cy.contains('new blog').click()
+      cy.get('#author').type('mr bunbun')
+      cy.get('#url').type('http://coolbunnies.blogspot.com')
+      cy.get('#title').type('Why am I so cute? Bun don\'t know!')
+      cy.get('#save-button').click()
+      // expect to see the blog in the list
+      cy.contains('Why am I so cute? Bun don\'t know!')
+    })
+
+    it('can\'t make a blog without a title', function () {
+      cy.contains('new blog').click()
+      cy.get('#author').type('mr bunbun')
+      cy.get('#url').type('http://coolbunnies.blogspot.com')
+      cy.get('#save-button').click()
+      // expect to not see the blog in the list
+      cy.should('not.contain', 'mr bunbun')
+    })
+
+    describe('make a blog by api', function () {
+      beforeEach(function () {
+        const authorization = `bearer ${Cypress.env('token')}`
+        cy.request({
+          method: 'POST',
+          url: 'http://localhost:3003/api/blogs',
+          body: {
+            author: 'mr bunbun',
+            url: 'http://coolbunnies.blogspot.com',
+            title: 'Why am I so cute? Bun don\'t know!'
+          },
+          headers: {
+            authorization
+          }
+        })
+      })
+
+      it('can find the creator', function () {
+        cy.contains('show').click()
+        cy.contains('likes: 0')
+        cy.contains('created by bunny')
+      })
+
+      it('can like a blog', function () {
+        cy.contains('show').click()
+        cy.contains('like').click()
+        cy.contains('likes: 1')
+
+        cy.contains('like').click().click().click().click().then(() => {
+          cy.contains('likes: 5')
+          cy.contains('created by bunny')
+        })
+      })
+    })
+  })
 })
 
-  // describe('after logging in', function () {
-  //   before(function () {
-  //     // use ap ost request to login
-  //     cy
-  //       .request({
-  //         method: 'POST',
-  //         url: 'http://localhost:3003/api/login',
-  //         body: {
-  //           username: 'bunny',
-  //           password: 'bunbun'
-  //         }
-  //       })
-  //       .then(response => {
-  //         Cypress.env('token', response.body.token)
-  //         window.localStorage.setItem(
-  //           'loggedNoteappUser', JSON.stringify(response.body)
-  //         )
-  //       })
-  //   })
 
-  //   beforeEach(function () {
-  //     cy.visit('http://localhost:3000')
-  //   })
 
-  //   it('can make a blog', function () {
-  //     cy.contains('new blog').click()
-  //     cy.get('#author').type('mr bunbun')
-  //     cy.get('#url').type('http://coolbunnies.blogspot.com')
-  //     cy.get('#title').type('Why am I so cute? Bun don\'t know!')
-  //     cy.get('#save-button').click()
-  //     // expect to see the blog in the list
-  //     cy.contains('Why am I so cute? Bun don\'t know!')
-  //   })
-
-  //   it('can\'t make a blog without a title', function () {
-  //     cy.contains('new blog').click()
-  //     cy.get('#author').type('mr bunbun')
-  //     cy.get('#url').type('http://coolbunnies.blogspot.com')
-  //     cy.get('#save-button').click()
-  //     // expect to not see the blog in the list
-  //     cy.should('not.contain', 'mr bunbun')
-  //   })
-
-  //   it('can log out', function () {
-  //     cy.contains('logout').click()
-  //     cy.contains('login')
-  //     cy.should('not.contain', 'Mr. Bunbun')
-  //   })
-
-  //   describe('after making a single blog', function () {
-  //     beforeEach(function () {
-  //       cy.request('POST', {
-  //         author: 'mr bunbun',
-  //         url: 'http://coolbunnies.blogspot.com',
-  //         title: 'Why am I so cute? Bun don\'t know!'
-  //       })
-  //     })
-
-  //     it('can find the creator', function () {
-  //       cy.contains('show').click()
-  //       cy.contains('likes: 0')
-  //       cy.contains(`created by bunny`)
-  //     })
-
-  //     it('can like a blog', function () {
-  //       cy.contains('show').click()
-  //       cy.contains('like').click()
-  //       cy.contains('likes: 1')
-
-  //       cy.contains('like').click().click().click().click()
-  //       cy.contains('likes: 5')
-  //       cy.contains(`created by bunny`)
-  //     })
 
   //     it('can delete a blog if the user is the creator', function () {
   //       cy.contains('show').click()
