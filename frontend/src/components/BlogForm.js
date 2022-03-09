@@ -12,7 +12,6 @@ const NoteForm = ({ createBlog }) => {
       author,
       title,
       url,
-      likes: 0,
     })
 
     setAuthor('')
